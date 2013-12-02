@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Controller name: JSON API User
+  Controller name: User
   Controller description: User Registration controller for JSON APi
  */
 
