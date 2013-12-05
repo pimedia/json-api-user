@@ -2,11 +2,11 @@
 
 /*
   Plugin Name: JSON API User
-  Plugin URI: 
+  Plugin URI: http://downloads.wordpress.org/plugin/json-api-user.zip
   Description: Extends the JSON API for user registration
   Version: 0.1
   Author: Ali Qureshi
-  Author URI: 
+  Author URI: http://www.parorrey.com/
   License: GPLv3
  */
 

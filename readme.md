@@ -1,18 +1,18 @@
 === JSON-API-User ===
 
-
-
 Tags: json api, api, register user, wordpress user registration,
 
-Stable Tag: 1.0
+Contributors: parorrey
 
-Tested up to: 3.7
+Stable tag: 0.1
+
+Requires at least: 3.0.1
+
+Tested up to: 3.7.1
 
 License: GPLv2 or later
 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-
-
 
 Extends the JSON API
 
@@ -20,7 +20,7 @@ Extends the JSON API
 ==Description==
 
 
-JSON API User is a plugin, that supports the JSON API Plugin with a new Controller to allow user registration.
+JSON API User is a plugin that supports the JSON API Plugin with a new Controller to allow user registration.
 
 
 ==Installation==
@@ -35,15 +35,20 @@ To install JSON API User just follow these steps:
 
 * activate the controller through the JSON API menu found in the WordPress admin center (Settings -> JSON API)
 
+== Screenshots ==
 
 
 ==Changelog==
 
+= 0.1 =
+* Initial release.
 
-=0.1=
 
+== Upgrade Notice ==
 
+= 0.1 =
+* Initial release.
 
 ==Frequently Asked Questions==
 
-For a full code documentation, link will be added later
+For a full code documentation, please check here https://github.com/pimedia/json-api-user
