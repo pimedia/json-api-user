@@ -2,8 +2,12 @@
 
 /*
   Controller name: User
-  Controller description: User Registration controller for JSON APi
- */
+  Controller description: User Registration and User Info controller for JSON API
+  Controller Author: Ali Qureshi
+  Controller Author Twitter: @parorrey
+  Controller Author Website: parorrey.com
+
+*/
 
 class JSON_API_User_Controller {
 
@@ -101,115 +105,115 @@ wp_new_user_notification( $user_id, $user_pass );
 		  
 	  }
    
-public function update_user(){
-	global $json_api;
+   
+  public function get_avatar(){	  
+	  	global $json_api;
+
+    if (!$json_api->query->user_id) {
+			$json_api->error("You must include 'user_id' var in your request. ");
+		}
+
+		preg_match('|src="(.+?)"|', get_avatar( $json_api->query->user_id, 32 ), $avatar);
+
+      
+        return $avatar;		   
 	  
-	$uid = $_REQUEST['userid'];
-	$nonce_id = $json_api->get_nonce_id('user', 'update_user');
+	  } 
+	  
+ public function get_userinfo(){	  
+	  	global $json_api;
 
+    if (!$json_api->query->user_id) {
+			$json_api->error("You must include 'user_id' var in your request. ");
+		}
 
-	//All non empty variables will be added to the associative array that will be passed to the wordpress object
+		$user = get_userdata($json_api->query->user_id);
 
-	$user_pass = $_REQUEST['user_pass'];
-	$user_login = $_REQUEST['user_login'];
-	$user_nicename = $_REQUEST['user_nicename'];
-	$user_url = $_REQUEST['user_url'];
-	$user_email = $_REQUEST['user_email'];
-	$display_name = $_REQUEST['display_name'];
-	$nickname = $_REQUEST['nickname'];
-	$first_name = $_REQUEST['first_name'];
-	$last_name = $_REQUEST['last_name'];
-	$description = $_REQUEST['description'];
-	$user_registered = $_REQUEST['user_registered'];
-	$role = $_REQUEST['role'];
-	$jabber = $_REQUEST['jabber'];
-	$aim = $_REQUEST['aim'];
-	$yim = $_REQUEST['yim'];
+        preg_match('|src="(.+?)"|', get_avatar( $user->ID, 32 ), $avatar);		
 
-	if(empty($_REQUEST['nonce'])) {
-     $msg = "You must include a 'nonce' value. Use the 'get_nonce' Core API method.";
-    }
-	elseif( !wp_verify_nonce($json_api->query->nonce, $nonce_id) ) {
-            $msg = "Invalid access, unverifiable 'nonce' value.";
-    }elseif(empty($uid)) {
-            $msg = "userid cannot be empty";
-    }
+		return array(
 
-    //To check that atleast one meta/data is requested to be updated
-    if(!empty($user_pass) || !empty($user_login) || !empty($user_nicename) || !empty($user_url) || !empty($user_email)
-    	|| !empty($display_name) || !empty($nickname) || !empty($first_name) || !empty($last_name) || !empty($description)
-    	|| !empty($user_registered) || !empty($role) || !empty($jabber) || !empty($aim) || !empty($yim)){
+				"id" => $user->ID,
+				"username" => $user->user_login,
+				"nicename" => $user->user_nicename,
+				"email" => $user->user_email,
+				"url" => $user->user_url,
+				"displayname" => $user->display_name,
+				"firstname" => $user->user_firstname,
+				"lastname" => $user->last_name,
+				"nickname" => $user->nickname,
+				"avatar" => $avatar[1]
+		   );	   
+	  
+	  }   
+   
+public function retrieve_password(){
+    global $wpdb, $json_api, $wp_hasher;
 
-    	$user_updates = array('ID' => $uid);
+  
+   if (!$json_api->query->user_login) {
+			$json_api->error("You must include 'user_login' var in your request. ");
+		}
 
-    	if(!empty($user_pass)){
-    		$user_updates['user_pass'] = $user_pass;
-    	}
-    	if(!empty($user_login)){
-    		$user_updates['user_login'] = $user_login;
-    	}
-    	if(!empty($user_nicename)){
-    		$user_updates['user_nicename'] = $user_nicename;
-    	}
-    	if(!empty($user_url)){
-    		$user_updates['user_url'] = $user_url;
-    	}
-    	if(!empty($user_email)){
-    		$user_updates['user_email'] = $user_email;
-    	}
-    	if(!empty($display_name)){
-    		$user_updates['display_name'] = $display_name;
-    	}
-    	if(!empty($nickname)){
-    		$user_updates['nickname'] = $nickname;
-    	}
-    	if(!empty($first_name)){
-    		$user_updates['first_name'] = $first_name;
-    	}
-    	if(!empty($last_name)){
-    		$user_updates['last_name'] = $last_name;
-    	}
-    	if(!empty($description)){
-    		$user_updates['description'] = $description;
-    	}
-    	if(!empty($first_name)){
-    		$user_updates['user_registered'] = $user_registered;
-    	}
-    	if(!empty($first_name)){
-    		$user_updates['role'] = $role;
-    	}
-    	if(!empty($first_name)){
-    		$user_updates['jabber'] = $jabber;
-    	}
-    	if(!empty($first_name)){
-    		$user_updates['aim'] = $aim;
-    	}
-    	if(!empty($first_name)){
-    		$user_updates['yim'] = $yim;
-    	}
+    $user_login = $json_api->query->user_login;
 
-    	//call wp_update_user
-
-    	$response_user_id = wp_update_user($user_updates) ;
-
-    	if(is_wp_error($response_user_id)){
-    		$code = "1";
-    		$msg = "WordPress error encountered.";
-    	}else{
-    		$code = "0";
-    		$msg = "Updates were successfull.";
-    	}
-    }else{
-    	    $code = "-1";
-    		$msg = "you have not requested to update any user meta/data";
+  if ( strpos( $user_login, '@' ) ) {
+        $user_data = get_user_by( 'email', trim( $user_login ) );
+        if ( empty( $user_data ) )
+        
+	 $json_api->error("Your email address not found! ");
+		
+    } else {
+        $login = trim($user_login);
+        $user_data = get_user_by('login', $login);
     }
 
- return array(
-	      "code" => $code,
-	      "msg" => $msg,
-	      "user_id" => $response_user_id
-	         ); 
+    // redefining user_login ensures we return the right case in the email
+    $user_login = $user_data->user_login;
+    $user_email = $user_data->user_email;
 
-	}
+    do_action('retrieve_password', $user_login);
+
+    $allow = apply_filters('allow_password_reset', true, $user_data->ID);
+
+    if ( ! $allow )  $json_api->error("password reset not allowed! ");        
+    elseif ( is_wp_error($allow) )  $json_api->error("An error occured! ");
+  
+
+    $key = wp_generate_password( 20, false );
+    do_action( 'retrieve_password_key', $user_login, $key );
+
+    if ( empty( $wp_hasher ) ) {
+        require_once ABSPATH . 'wp-includes/class-phpass.php';
+        $wp_hasher = new PasswordHash( 8, true );
+    }
+    $hashed = $wp_hasher->HashPassword( $key );
+    $wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) );
+
+    $message = __('Someone requested that the password be reset for the following account:') . "\r\n\r\n";
+    $message .= network_home_url( '/' ) . "\r\n\r\n";
+    $message .= sprintf(__('Username: %s'), $user_login) . "\r\n\r\n";
+    $message .= __('If this was a mistake, just ignore this email and nothing will happen.') . "\r\n\r\n";
+    $message .= __('To reset your password, visit the following address:') . "\r\n\r\n";
+    $message .= '<' . network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user_login), 'login') . ">\r\n";
+
+    if ( is_multisite() )
+        $blogname = $GLOBALS['current_site']->site_name;
+    else
+        $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+
+    $title = sprintf( __('[%s] Password Reset'), $blogname );
+
+    $title = apply_filters('retrieve_password_title', $title);
+    $message = apply_filters('retrieve_password_message', $message, $key);
+
+    if ( $message && !wp_mail($user_email, $title, $message) )
+       $json_api->error("The e-mail could not be sent. Possible reason: your host may have disabled the mail() function...");
+	else    
+  
+   return array(
+    "msg" => 'Link for password reset has been emailed to you. Please check your email.',
+		  );	    
+     } 
    
 }

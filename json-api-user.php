@@ -3,7 +3,7 @@
 /*
   Plugin Name: JSON API User
   Plugin URI: http://downloads.wordpress.org/plugin/json-api-user.zip
-  Description: Extends the JSON API for user registration
+  Description: Extends the JSON API for RESTful user registration, password reset and other user related functions
   Version: 0.1
   Author: Ali Qureshi
   Author URI: http://www.parorrey.com/
