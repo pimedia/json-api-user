@@ -4,7 +4,7 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="JSON API User : JSON API User extends the JSON API WordPress Plugin to allow user registration via REST." />
+    <meta name="description" content="JSON API User : JSON API User WordPress Plugin extends the JSON API Plugin for RESTful user registration, password reset, Facebook Login and user meta and BuddyPress Profile related functions" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/pimedia/json-api-user">View on GitHub</a>
 
           <h1 id="project_title">JSON API User</h1>
-          <h2 id="project_tagline">JSON API User extends the JSON API WordPress Plugin to allow user registration via REST.</h2>
+          <h2 id="project_tagline">JSON API User WordPress Plugin extends the JSON API Plugin for RESTful user registration, password reset, Facebook Login and user meta and BuddyPress Profile related functions</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/pimedia/json-api-user/zipball/master">Download this project as a .zip file</a>
@@ -31,31 +31,52 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <p><img src="http://ps.w.org/json-api-user/assets/banner-772x250.png" alt="JSON API User"></p>
+        <p><img src="http://ps.w.org/json-api-user/assets/banner-772x250.png" alt="JSON API User Plugin"></p>
 
-<h2>
-<a name="json-api-user" class="anchor" href="#json-api-user"><span class="octicon octicon-link"></span></a>JSON API User</h2>
+<h1>
+<a name="json-api-user" class="anchor" href="#json-api-user"><span class="octicon octicon-link"></span></a>JSON API User</h1>
 
-<p>Tags: json api, api, register user, wordpress user registration,</p>
+<p>Donate link:</p>
+
+<p>Tags: json api, RESTful user registration, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile</p>
 
 <p>Contributors: parorrey</p>
 
-<p>Stable tag: 0.1</p>
+<p>Stable tag: 1.1</p>
 
 <p>Requires at least: 3.0.1</p>
 
-<p>Tested up to: 3.8.1</p>
+<p>Tested up to: 3.9.1</p>
 
 <p>License: GPLv2 or later</p>
 
 <p>License URI: <a href="http://www.gnu.org/licenses/gpl-2.0.html">http://www.gnu.org/licenses/gpl-2.0.html</a></p>
 
-<p>JSON API User extends the JSON API WordPress Plugin</p>
+<p>Extends the JSON API Plugin</p>
 
 <h2>
 <a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>Description</h2>
 
-<p>JSON API User is a plugin that supports the JSON API Plugin with a new Controller to allow user registration.</p>
+<p>JSON API User is a plugin that extends the JSON API Plugin with a new Controller to allow RESTful user registration, password reset, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile methods. This plugin is for WordPress/Mobile app developers who also want to use WordPress as mobile app backend. </p>
+
+<p>Features include:</p>
+
+<ul>
+<li>Generate Auth Cookie for user authentication</li>
+<li>Validate Auth Cookie</li>
+<li>RESTful User Registration</li>
+<li>RESTful Facebook Login/Registration with valid access_token</li>
+<li>RESTful User Meta update</li>
+<li>RESTful BuddyPress xProfile fields update</li>
+<li>Get User Meta and xProfile fields</li>
+<li>Password Reset</li>
+<li>Get Avatar</li>
+<li>Get User Info</li>
+</ul><p>The plugin was created for mobile apps integration with the web app using WordPress as backend for all the data. WordPress helped in putting together the web app quickly and then Mobile iOS and Android apps were integrated via this plugin. There were some app specific customized methods which are not included but rest have been made generic for community usage. </p>
+
+<p>My other JSON API Auth plugin has also been integrated with this from version 1.1. since most methods required user authentication via cookie for data update. You can also write your own methods by copying the existing methods if you need any user related features.</p>
+
+<p>Hope this will help some.</p>
 
 <h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
@@ -65,17 +86,109 @@
 <p>To install JSON API User just follow these steps:</p>
 
 <ul>
-<li><p>upload the folder "json-api-user" to your WordPress plugin folder (/wp-content/plugins)</p></li>
-<li><p>activate the plugin through the 'Plugins' menu in WordPress or by using the link provided by the plugin installer</p></li>
-<li><p>activate the controller through the JSON API menu found in the WordPress admin center (Settings -&gt; JSON API)</p></li>
+<li>Upload the folder "json-api-user" to your WordPress plugin folder (/wp-content/plugins)</li>
+<li>Activate the plugin through the 'Plugins' menu in WordPress or by using the link provided by the plugin installer</li>
+<li>Activate the controller through the JSON API menu found in the WordPress admin center (Settings -&gt; JSON API)</li>
 </ul><h2>
 <a name="changelog" class="anchor" href="#changelog"><span class="octicon octicon-link"></span></a>Changelog</h2>
 
-<p>= 0.1 =</p>
+<p>= 1.1 =</p>
+
+<ul>
+<li><p>Added fb_connect method. It needs valid 'access_token' var.</p></li>
+<li><p>Added validate_auth_cookie method. It needs 'cookie' var.</p></li>
+<li><p>Added generate_auth_cookie method. It needs 'nonce' var.</p></li>
+<li><p>Added delete_user_meta method. It needs 'cookie' and 'meta_key' var and 'meta_value' to delete.</p></li>
+<li><p>Added update_user_meta method. It needs 'cookie' and 'meta_key' var and 'meta_value' to update.</p></li>
+<li><p>Added get_user_meta method. It needs 'user_id'. 'meta_key' var is optional.</p></li>
+<li><p>Added xprofile method. It needs 'user_id' and any profile 'field' var.</p></li>
+<li><p>Added xprofile_update method. It needs 'cookie' and any profile 'field' var and 'value'.</p></li>
+</ul><p>= 1.0 =</p>
+
+<ul>
+<li><p>Added retrieve_password method. It needs user_login var.</p></li>
+<li><p>Added get_avatar method. It needs user_id var.</p></li>
+<li><p>Added get_userinfo method. It needs user_id var.</p></li>
+</ul><p>= 0.1 =</p>
 
 <ul>
 <li>Initial release.</li>
 </ul><h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<ul>
+<li><p>There are following methods available: register, get_avatar, get_userinfo, retrieve_password, validate_auth_cookie, generate_auth_cookie, get_currentuserinfo, get_user_meta, update_user_meta, delete_user_meta, xprofile, xprofile_update, fb_connect</p></li>
+<li><p>nonce can be created by calling if you are registering user. http://localhost/api/get_nonce/?controller=user&amp;method=register</p></li>
+<li><p>You can then use 'nonce' value to register user.</p></li>
+</ul><p>= Method: fb_connect =</p>
+
+<p>It needs valid 'access_token' var.</p>
+
+<p>http://localhost/api/user/fb_connect/?access_token=CAACEdEose0cBADLKmcHWOZCnW4RGU8emG</p>
+
+<p>= Method: validate_auth_cookie =</p>
+
+<p>It needs 'cookie' var.</p>
+
+<p>http://localhost/api/user/validate_auth_cookie/?cookie=admin|43089754375034fjwfn39u8</p>
+
+<p>= Method: generate_auth_cookie =</p>
+
+<p>It needs 'nonce' var.</p>
+
+<p>First get the nonce: http://localhost/api/get_nonce/?controller=user&amp;method=generate_auth_cookie</p>
+
+<p>Then generate cookie: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&amp;user_id=john&amp;passsword=PASSWORD-HERE</p>
+
+<p>= Method: delete_user_meta =</p>
+
+<p>It needs 'cookie' and 'meta_key' var and 'meta_value' to delete.</p>
+
+<p>http://localhost/api/user/delete_user_meta/?cookie=COOKIE-HERE&amp;meta_key=KEY-HERE&amp;meta_value=VALUE-HERE</p>
+
+<p>= Method: update_user_meta =</p>
+
+<p>It needs 'cookie' and 'meta_key' var and 'meta_value' to update.</p>
+
+<p>http://localhost/api/user/update_user_meta/?cookie=COOKIE-HERE&amp;meta_key=KEY-HERE&amp;meta_value=VALUE-HERE</p>
+
+<p>= Method: get_user_meta =</p>
+
+<p>It needs 'user_id'. 'meta_key' var is optional.</p>
+
+<p>http://localhost/api/user/get_user_meta/?user_id=USERID-HERE&amp;meta_key=KEY-HERE</p>
+
+<p>= Method: xprofile =</p>
+
+<p>It needs 'user_id' and any profile 'field' var.</p>
+
+<p>http://localhost/api/user/xprofile/?user_id=USERID-HERE&amp;field=FIELD-LABEL-HERE</p>
+
+<p>= Method: xprofile_update =</p>
+
+<p>It needs 'cookie' and any profile 'field' var and 'value'.</p>
+
+<p>http://localhost/api/user/xprofile_update/?cookie=COOKIE-HERE&amp;field=FIELD-LABEL-HERE&amp;value=VALUE=HERE</p>
+
+<p>= Method: retrieve_password =</p>
+
+<p>It needs user_login var.</p>
+
+<p>http://localhost/api/user/retrieve_password/?user_login=john</p>
+
+<p>= Method: get_avatar =</p>
+
+<p>It needs user_id var.</p>
+
+<p>http://localhost/api/user/get_avatar/?user_id=1</p>
+
+<p>= Method: get_userinfo =</p>
+
+<p>It needs user_id var.</p>
+
+<p>http://localhost/api/user/get_userinfo/?user_id=1</p>
+
+<h2>
 <a name="credits" class="anchor" href="#credits"><span class="octicon octicon-link"></span></a>Credits</h2>
 
 <p><a href="http://www.parorrey.com">PI Media</a></p>
