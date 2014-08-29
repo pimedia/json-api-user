@@ -2,27 +2,27 @@
 
 Donate link:
 
-Tags: json api, RESTful user registration, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile
+Tags: json api, RESTful user registration, authentication, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile
 
 Contributors: parorrey
 
-Stable tag: 1.1
+Stable tag: 1.2.2
 
 Requires at least: 3.0.1
 
-Tested up to: 3.9.1
+Tested up to: 3.9.2
 
 License: GPLv2 or later
 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Extends the JSON API Plugin
+Extends the JSON API Plugin to allow RESTful user registration, authentication and many other User Meta, BuddyPress functions.
 
 
 ==Description==
 
 
-JSON API User is a plugin that extends the JSON API Plugin with a new Controller to allow RESTful user registration, password reset, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile methods. This plugin is for WordPress/Mobile app developers who also want to use WordPress as mobile app backend. 
+JSON API User extends the JSON API Plugin with a new Controller to allow RESTful user registration, authentication, password reset, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile get and update methods. This plugin is for WordPress/Mobile app developers who want to use WordPress as mobile app data backend. 
 
 
 Features include:
@@ -34,6 +34,8 @@ Features include:
 * RESTful User Meta update
 * RESTful BuddyPress xProfile fields update
 * Get User Meta and xProfile fields
+* Update User Meta and xProfile fields
+* Delete User Meta
 * Password Reset
 * Get Avatar
 * Get User Info
@@ -43,6 +45,8 @@ The plugin was created for mobile apps integration with the web app using WordPr
 My other JSON API Auth plugin has also been integrated with this from version 1.1. since most methods required user authentication via cookie for data update. You can also write your own methods by copying the existing methods if you need any user related features.
 
 Hope this will help some.
+
+For details: http://www.parorrey.com/solutions/json-api-user/ A pro-version of this plugin will be available shortly that will support BuddyPress Messages component, BuddyPress avatar upload and other BuddyPress related functions to integrate BuddyPress features to your mobile app via REST.
 
 ==Installation==
 
@@ -58,6 +62,22 @@ To install JSON API User just follow these steps:
 
 
 ==Changelog==
+
+= 1.2.2 =
+
+* removed extra fields from xprofile end point for 'default' value
+
+= 1.2.1 =
+
+* removed debugging code from generate_auth_cookie 
+
+= 1.2 =
+
+* Updated register method to allow all available fields with user registration. These include 'user_login', 'user_email', 'user_pass', 'display_name', 'user_nicename', 'user_url', 'nickname', 'first_name', 'last_name', 'description', 'rich_editing', 'user_registered', 'role', 'jabber', 'aim', 'yim', 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front'. 
+
+* Updated xprofile_update method to correctly update multiple values for any field in array format. Earlier, it was updating all values as array. You can also update more than one field simultaneously.
+
+* Fixed some documentation typos
 
 = 1.1 =
 
@@ -102,6 +122,14 @@ To install JSON API User just follow these steps:
 
 * You can then use 'nonce' value to register user.
 
+= Method: register =
+
+http://localhost/api/user/register/?username=john&email=john@domain.com&nonce=8bdfeb4e16&display_name=John
+
+Optional fields: 'user_pass', 'user_nicename', 'user_url', 'nickname', 'first_name', 'last_name', 'description', 'rich_editing', 'user_registered', 'role', 'jabber', 'aim', 'yim', 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front'. 
+
+Please make sure you provide valid values that these fields expect in correct format.
+
 = Method: fb_connect =
 
 It needs valid 'access_token' var.
@@ -120,7 +148,7 @@ It needs 'nonce' var.
 
 First get the nonce: http://localhost/api/get_nonce/?controller=user&method=generate_auth_cookie
 
-Then generate cookie: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&user_id=john&passsword=PASSWORD-HERE
+Then generate cookie: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&user_id=john&password=PASSWORD-HERE
 
 = Method: delete_user_meta =
 
@@ -151,7 +179,12 @@ http://localhost/api/user/xprofile/?user_id=USERID-HERE&field=FIELD-LABEL-HERE
 
 It needs 'cookie' and any profile 'field' var and 'value'.
 
-http://localhost/api/user/xprofile_update/?cookie=COOKIE-HERE&field=FIELD-LABEL-HERE&value=VALUE=HERE
+http://localhost/api/user/xprofile_update/?cookie=COOKIE-HERE&exact-xprofile-field-label=value
+
+http://localhost/api/user/xprofile_update/?cookie=COOKIE-HERE&field=value&field2=value&multi-value-field=value1,value2,value3
+
+Please make sure you provide ending comma for all those fields which have multiple values. e.g. If 'skills' xProfile field has multiple values, pass them like 
+http://localhost/api/user/xprofile_update/?cookie=COOKIE-HERE&skills=PHP,MySQL, or &skills=PHP, make sure you always pass ending comma for multi-select fields to be added in array format.
 
 = Method: retrieve_password =
 
@@ -171,4 +204,4 @@ It needs user_id var.
 
 http://localhost/api/user/get_userinfo/?user_id=1
 
-Please check here https://github.com/pimedia/json-api-user
+For details, check here http://www.parorrey.com/solutions/json-api-user/

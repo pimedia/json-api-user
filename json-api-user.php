@@ -4,11 +4,11 @@
 
   Plugin Name: JSON API User
 
-  Plugin URI: http://downloads.wordpress.org/plugin/json-api-user.zip
+  Plugin URI: http://www.parorrey.com/solutions/json-api-user/
 
-  Description: Extends the JSON API for RESTful user registration, password reset, Facebook Login, user meta and BuddyPress Profile related functions
+  Description: Extends the JSON API for RESTful user registration, authentication, password reset, Facebook Login, user meta and BuddyPress Profile related functions
 
-  Version: 1.1
+  Version: 1.2.2
 
   Author: Ali Qureshi
 

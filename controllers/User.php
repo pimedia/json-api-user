@@ -2,20 +2,20 @@
 
 /*
   Controller name: User
-  Controller description: User Registration, User Info, User Meta, FB Login, User Meta, BuddyPress xProfile Fields methods
+  Controller description: User Registration, Authentication, User Info, User Meta, FB Login, BuddyPress xProfile Fields methods
   Controller Author: Ali Qureshi
   Controller Author Twitter: @parorrey
   Controller Author Website: parorrey.com
-
+  
 */
 class JSON_API_User_Controller {
 
   /**
-     * Returns an Array with registered userid
+     * Returns an Array with registered userid & valid cookie
      * @param String username: username to register
      * @param String email: email address for user registration
-	 * @param String password: password to be set (optional)
-     * @param String displayname: displayname for user
+	 * @param String user_pass: user_pass to be set (optional)
+     * @param String display_name: display_name for user
      */   
 
 public function register(){
@@ -38,17 +38,12 @@ public function register(){
 		}
  else $nonce =  sanitize_text_field( $json_api->query->nonce ) ;
  
-  if (!$json_api->query->nonce) {
-			$json_api->error("You must include 'nonce' var in your request. Use the 'get_nonce' Core API method. ");
-		}
- else $nonce =  sanitize_text_field( $json_api->query->nonce ) ;
-
  if (!$json_api->query->display_name) {
 			$json_api->error("You must include 'display_name' var in your request. ");
 		}
-	else $displayname = sanitize_text_field( $json_api->query->display_name );
+	else $display_name = sanitize_text_field( $json_api->query->display_name );
 
-$password = sanitize_text_field( $_REQUEST['password'] );
+$user_pass = sanitize_text_field( $_REQUEST['user_pass'] );
 
 //Add usernames we don't want used
 
@@ -95,23 +90,32 @@ else {
 
 //Create the user
 
-if( empty($password) ) $user_pass = wp_generate_password();
+if( !isset($_REQUEST['user_pass']) ) {
+	 $user_pass = wp_generate_password();
+	 $_REQUEST['user_pass'] = $user_pass;
+}
 
-else $user_pass = $password;
+ $_REQUEST['user_login'] = $username;
+ $_REQUEST['user_email'] = $email;
 
-$user = array(  
-    'user_login' => $username,
-    'user_pass' => $user_pass,
-    'display_name' => $displayname,
-    'user_email' => $email
-    );
+$allowed_params = array('user_login', 'user_email', 'user_pass', 'display_name', 'user_nicename', 'user_url', 'nickname', 'first_name',
+                         'last_name', 'description', 'rich_editing', 'user_registered', 'role', 'jabber', 'aim', 'yim',
+						 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front'
+                   );
+
+
+foreach($_REQUEST as $field => $value){
+		
+	if( in_array($field, $allowed_params) ) $user[$field] = trim(sanitize_text_field($value));
+	
+    }
 
 $user_id = wp_insert_user( $user );
 
 /*Send e-mail to admin and new user - 
 You could create your own e-mail instead of using this function*/
 
-wp_new_user_notification( $user_id, $user_pass );	  
+if($user_id) wp_new_user_notification( $user_id, $user_pass );	  
 
 			}
 		} 
@@ -127,10 +131,9 @@ wp_new_user_notification( $user_id, $user_pass );
 		  "user_id" => $user_id	
 		  ); 		  
 
-  }
-   
+  }   
 
-  public function get_avatar(){	  
+public function get_avatar(){	  
 
 	  	global $json_api;
 
@@ -156,8 +159,7 @@ $avatar	= bp_core_fetch_avatar ( array( 'item_id' => $json_api->query->user_id, 
   
 	 } 
 
-
- public function get_userinfo(){	  
+public function get_userinfo(){	  
 
 	  	global $json_api;
 
@@ -183,7 +185,6 @@ $avatar	= bp_core_fetch_avatar ( array( 'item_id' => $json_api->query->user_id, 
 		   );	   
 
 	  }   
-
 
 public function retrieve_password(){
 
@@ -325,8 +326,6 @@ public function validate_auth_cookie() {
 
 	}
 
-
-
 public function generate_auth_cookie() {
 
 		global $json_api;
@@ -351,10 +350,13 @@ public function generate_auth_cookie() {
 		if (!$json_api->query->password) {
 
 			$json_api->error("You must include a 'password' var in your request.");
-		}		
+		}else $password	= 	$json_api->query->password;
+//d($password);
+
+ $user = wp_authenticate($json_api->query->username, $password);
 
 
-    	$user = wp_authenticate($json_api->query->username, $json_api->query->password);
+
 
     	if (is_wp_error($user)) {
 
@@ -412,8 +414,6 @@ public function generate_auth_cookie() {
 		);
 
 	}
-
-	
 
 public function get_currentuserinfo() {
 
@@ -473,9 +473,8 @@ public function get_currentuserinfo() {
 		);
 
 	}	
-
 	  
-  public function get_user_meta() {
+public function get_user_meta() {
 	 
 	  global $json_api;
 	  
@@ -489,13 +488,13 @@ public function get_currentuserinfo() {
 		  
 		if($meta_key) $data[$meta_key] = get_user_meta(  $user_id, $meta_key);
 		else $data = get_user_meta(  $user_id);
-
+//d($data);
 	   return $data;
 	    
 	  
 	  }
 	  
- public function update_user_meta() {
+public function update_user_meta() {
 	 
 	  global $json_api;
 	  
@@ -525,7 +524,7 @@ public function get_currentuserinfo() {
 	  
 	  }
 	  
- public function delete_user_meta() {
+public function delete_user_meta() {
 	 
 	  global $json_api;
 	  
@@ -554,14 +553,12 @@ public function get_currentuserinfo() {
 	  
 	  }
 	  
-   public function xprofile() {
+public function xprofile() {
 	 
 	  global $json_api;
 	  
 if (function_exists('bp_is_active')) {	
 
-	global $bp;
-	
 	  if (!$json_api->query->user_id) {
 			$json_api->error("You must include a 'user_id' var in your request.");
 		}
@@ -572,7 +569,7 @@ if (function_exists('bp_is_active')) {
 			$json_api->error("You must include a 'field' var in your request. Use 'field=default' for all default fields.");
 		}
 	  elseif ($json_api->query->field=='default') {
-			$field_label='Name,Last Name';
+			$field_label='First Name, Last Name, Bio';/*you should add your own field labels here for quick viewing*/
 		}	
 		else $field_label = sanitize_text_field($json_api->query->field);	
   
@@ -602,16 +599,11 @@ if (function_exists('bp_is_active')) {
 
   }
 
-
- public function xprofile_update() {
+public function xprofile_update() {
 	 
-	  global $json_api;
-	  
-	  //d($_REQUEST);
+	  global $json_api;	
 
 if (function_exists('bp_is_active')) {	
-
-	global $bp;
 	
 	  if (!$json_api->query->cookie) {
 			$json_api->error("You must include a 'cookie' var in your request. Use the `generate_auth_cookie` method.");
@@ -623,29 +615,27 @@ if (function_exists('bp_is_active')) {
 		if (!$user_id) {
 			$json_api->error("Invalid cookie. Use the `generate_auth_cookie` method.");
 		}
+
+
+foreach($_REQUEST as $field => $value){
 		
-   if (!$json_api->query->field) {
-			$json_api->error("You must include a 'field' var in your request.");
-		}
-		else $field_label = sanitize_text_field($json_api->query->field);	
+	if($field=='cookie') continue;
+	
+	$field_label = str_replace('_',' ',$field);
+	
+	if( strpos($value,',') !== false ) {
+		$values = explode(",", $value);
+	   $values = array_map('trim',$values);
+	   }
+	else $values = trim($value);
+	//echo 'field-values: '.$field.'=>'.$value;
+	//d($values);
   
-   if (!$json_api->query->value) {
-			$json_api->error("You must include a 'value' var in your request.(multiple values separated by comma)");
-		}
-		else $field_value = sanitize_text_field($json_api->query->value);
+  $result[$field_label]['updated'] = xprofile_set_field_data( $field_label,  $user_id, $values, $is_required = true ); 
+  
+}
 
- $array_values = explode(",", $field_value);
-
-$result = xprofile_set_field_data( $field_label,  $user_id, $array_values, $is_required = true );
-
-$field_data = xprofile_get_field_data( $field_label, $user_id );
-
-//echo '$field_data: '.$field_data;
-
-	 return array(
-		'updated'=> $result,		
-		$field_label => $field_data
-	     );
+	 return $result;
    }
    
   else {
@@ -654,10 +644,9 @@ $field_data = xprofile_get_field_data( $field_label, $user_id );
 	  
 	  }
 
-  }
+  }  
   
-  
-  public function fb_connect(){
+public function fb_connect(){
 	  
 	    global $json_api;
 		
@@ -736,19 +725,20 @@ curl_close($ch);
 			 $expiration = time() + apply_filters('auth_cookie_expiration', 1209600, $user_id, true);
     	     $cookie = wp_generate_auth_cookie($user_id, $expiration, 'logged_in');
         
-		$result['msg'] = $user_account;
-		$result['wp_user_id'] = $user_id;
-		$result['cookie'] = $cookie;
-		$result['user_login'] = $user_name;
+		$response['msg'] = $user_account;
+		$response['wp_user_id'] = $user_id;
+		$response['cookie'] = $cookie;
+		$response['user_login'] = $user_name;	
+		
 		}
 		else {
-			$result['msg'] = "Your 'access_token' did not return email of the user. Without 'email' user can't be logged in or registered. Get user email extended permission while joining the Facebook app.";
+			$response['msg'] = "Your 'access_token' did not return email of the user. Without 'email' user can't be logged in or registered. Get user email extended permission while joining the Facebook app.";
 
 			}
 	
 	}	
 
-return $result;
+return $response;
 	  
 	  }
  
