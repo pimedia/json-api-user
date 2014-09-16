@@ -6,11 +6,11 @@ Tags: json api, RESTful user registration, authentication, RESTful Facebook Logi
 
 Contributors: parorrey
 
-Stable tag: 1.2.2
+Stable tag: 1.3
 
 Requires at least: 3.0.1
 
-Tested up to: 3.9.2
+Tested up to: 4.0
 
 License: GPLv2 or later
 
@@ -31,7 +31,6 @@ Features include:
 * Validate Auth Cookie
 * RESTful User Registration
 * RESTful Facebook Login/Registration with valid access_token
-* RESTful User Meta update
 * RESTful BuddyPress xProfile fields update
 * Get User Meta and xProfile fields
 * Update User Meta and xProfile fields
@@ -39,6 +38,7 @@ Features include:
 * Password Reset
 * Get Avatar
 * Get User Info
+* Post Comment
 
 The plugin was created for mobile apps integration with the web app using WordPress as backend for all the data. WordPress helped in putting together the web app quickly and then Mobile iOS and Android apps were integrated via this plugin. There were some app specific customized methods which are not included but rest have been made generic for community usage. 
 
@@ -62,6 +62,13 @@ To install JSON API User just follow these steps:
 
 
 ==Changelog==
+
+
+= 1.3 =
+
+* Updated get_user_meta method. It requires 'cookie' var now to protect it. 'meta_key' var is optional.
+* Updated get_userinfo method. Removed email, user_login values from response 
+* Added post_comment method. It needs 'cookie', 'post_id', 'content' and 'comment_status' vars.
 
 = 1.2.2 =
 
@@ -91,7 +98,7 @@ To install JSON API User just follow these steps:
 
 * Added update_user_meta method. It needs 'cookie' and 'meta_key' var and 'meta_value' to update.
 
-* Added get_user_meta method. It needs 'user_id'. 'meta_key' var is optional.
+* Added get_user_meta method. It needs 'cookie'. 'meta_key' var is optional.
 
 * Added xprofile method. It needs 'user_id' and any profile 'field' var.
 
@@ -136,6 +143,10 @@ It needs valid 'access_token' var.
 
 http://localhost/api/user/fb_connect/?access_token=CAACEdEose0cBADLKmcHWOZCnW4RGU8emG
 
+Provide valid access_token with email extended permission. To generate test access_token, try this tool https://developers.facebook.com/tools/explorer/ and select the app from above drop down that you want to get access_token for and then select email from the fields. By default, only 'id' and 'name' are added but you need to include 'email' for user identification.
+
+You will have to first allow extended permission for email in the app joining screen. Please note that above tool is only for testing, you generate valid access_token using the Graph API in your app.
+
 = Method: validate_auth_cookie =
 
 It needs 'cookie' var.
@@ -166,7 +177,7 @@ http://localhost/api/user/update_user_meta/?cookie=COOKIE-HERE&meta_key=KEY-HERE
 
 It needs 'user_id'. 'meta_key' var is optional.
 
-http://localhost/api/user/get_user_meta/?user_id=USERID-HERE&meta_key=KEY-HERE
+http://localhost/api/user/get_user_meta/?cookie=COOKIE-HERE&meta_key=KEY-HERE
 
 
 = Method: xprofile =
@@ -203,5 +214,11 @@ http://localhost/api/user/get_avatar/?user_id=1
 It needs user_id var.
 
 http://localhost/api/user/get_userinfo/?user_id=1
+
+= Method: post_comment =
+
+It needs 'cookie', 'post_id', 'content', 'comment_status' vars.
+
+http://localhost/api/user/post_comment/?cookie=COOKIE-HERE&post_id=ID&content=Comment contents here&comment_status=1
 
 For details, check here http://www.parorrey.com/solutions/json-api-user/
