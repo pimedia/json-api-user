@@ -8,7 +8,11 @@
 
   Description: Extends the JSON API for RESTful user registration, authentication, password reset, Facebook Login, user meta and BuddyPress Profile related functions
 
+<<<<<<< HEAD
   Version: 1.4
+=======
+  Version: 1.3
+>>>>>>> origin/master
 
   Author: Ali Qureshi
 

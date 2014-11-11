@@ -488,6 +488,7 @@ public function get_user_meta() {
 	
  $meta_key = sanitize_text_field($json_api->query->meta_key);	
   
+<<<<<<< HEAD
 		  
 		if($meta_key) $data[$meta_key] = get_user_meta(  $user_id, $meta_key);
 		else {
@@ -604,6 +605,111 @@ if (function_exists('bp_is_active')) {
 	    
 	  
 	  }
+=======
+		  
+		if($meta_key) $data[$meta_key] = get_user_meta(  $user_id, $meta_key);
+		else $data = get_user_meta(  $user_id);
+//d($data);
+	   return $data;
+	    
+	  
+	  }
+	  
+public function update_user_meta() {
+	 
+	  global $json_api;
+	  
+	   if (!$json_api->query->cookie) {
+			$json_api->error("You must include a 'cookie' var in your request. Use the `generate_auth_cookie` method.");
+		}
+
+		$user_id = wp_validate_auth_cookie($json_api->query->cookie, 'logged_in');
+
+	if (!$user_id) 	$json_api->error("Invalid cookie. Use the `generate_auth_cookie` method.");
+		
+		
+   if (!$json_api->query->meta_key) $json_api->error("You must include a 'meta_key' var in your request.");
+		
+		else $meta_key = $json_api->query->meta_key;	
+  
+   if (!$json_api->query->meta_value) {
+			$json_api->error("You must include a 'meta_value' var in your request.");
+		}
+		else $meta_value = sanitize_text_field($json_api->query->meta_value);
+  
+		  
+		$data['updated'] = update_user_meta(  $user_id, $meta_key, $meta_value);
+		
+
+	   return $data;	    
+	  
+	  }
+	  
+public function delete_user_meta() {
+	 
+	  global $json_api;
+	  
+	   if (!$json_api->query->cookie) {
+			$json_api->error("You must include a 'cookie' var in your request. Use the `generate_auth_cookie` method.");
+		}
+
+		$user_id = wp_validate_auth_cookie($json_api->query->cookie, 'logged_in');
+
+	if (!$user_id) 	$json_api->error("Invalid cookie. Use the `generate_auth_cookie` method.");
+		
+		
+   if (!$json_api->query->meta_key) $json_api->error("You must include a 'meta_key' var in your request.");
+		
+		else $meta_key = $json_api->query->meta_key;	
+  
+   if (!$json_api->query->meta_value) {
+			$json_api->error("You must include a 'meta_value' var in your request.");
+		}
+		else $meta_value = sanitize_text_field($json_api->query->meta_value);
+  
+
+		$data['deleted'] = delete_user_meta(  $user_id, $meta_key, $meta_value);
+		
+	   return $data;	    
+	  
+	  }
+	  
+public function xprofile() {
+	 
+	  global $json_api;
+	  
+if (function_exists('bp_is_active')) {	
+
+	  if (!$json_api->query->user_id) {
+			$json_api->error("You must include a 'user_id' var in your request.");
+		}
+		else $user_id = $json_api->query->user_id;
+	
+		
+   if (!$json_api->query->field) {
+			$json_api->error("You must include a 'field' var in your request. Use 'field=default' for all default fields.");
+		}
+	  elseif ($json_api->query->field=='default') {
+			$field_label='First Name, Last Name, Bio';/*you should add your own field labels here for quick viewing*/
+		}	
+		else $field_label = sanitize_text_field($json_api->query->field);	
+  
+  
+  $fields = explode(",", $field_label);
+  
+  if(is_array($fields)){
+	  
+	  foreach($fields as $k){
+		  
+		  $fields_data[$k] = xprofile_get_field_data( $k, $user_id );
+		  
+		  }
+	
+	   return $fields_data;
+	    
+	  
+	  }
+>>>>>>> origin/master
 	
    }
    
