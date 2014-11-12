@@ -6,11 +6,7 @@ Tags: json api, RESTful user registration, authentication, RESTful Facebook Logi
 
 Contributors: parorrey
 
-<<<<<<< HEAD
 Stable tag: 1.4
-=======
-Stable tag: 1.3
->>>>>>> origin/master
 
 Requires at least: 3.0.1
 
@@ -50,15 +46,11 @@ My other JSON API Auth plugin has also been integrated with this from version 1.
 
 Hope this will help some.
 
-<<<<<<< HEAD
 =Pro Version - JSON API User Plus=
 
 A pro version of this plugin, JSON API User Plus, is available here http://www.parorrey.com/solutions/json-api-user-plus/ that supports BuddyPress Messages component, BuddyPress avatar upload and other BuddyPress related functions to integrate BuddyPress features in your mobile app via REST.
 
 'JSON API User Plus' includes API key which protects and restricts the endpoint calls. This key can be updated from Settings > User Plus options page. Your app must include this key with every call to get the data from REST API. Please see documentation for calling endpoints examples for 'JSON API User Plus'.
-=======
-For details: http://www.parorrey.com/solutions/json-api-user/ A pro-version of this plugin will be available shortly that will support BuddyPress Messages component, BuddyPress avatar upload and other BuddyPress related functions to integrate BuddyPress features to your mobile app via REST.
->>>>>>> origin/master
 
 ==Installation==
 
@@ -185,19 +177,12 @@ http://localhost/api/user/delete_user_meta/?cookie=COOKIE-HERE&meta_key=KEY-HERE
 
 = Method: update_user_meta =
 
-<<<<<<< HEAD
 It needs 'cookie' and 'meta_key' var and 'meta_value' to update. You may send multiple values separated by comma.  
 
 http://localhost/api/user/update_user_meta/?cookie=COOKIE-HERE&meta_key=KEY-HERE&meta_value=VALUE-HERE
 
 http://localhost/api/user/update_user_meta/?cookie=COOKIE-HERE&&meta_key=KEY-HERE&meta_value=value1,value2,value3
 
-=======
-It needs 'cookie' and 'meta_key' var and 'meta_value' to update.
-
-http://localhost/api/user/update_user_meta/?cookie=COOKIE-HERE&meta_key=KEY-HERE&meta_value=VALUE-HERE
-
->>>>>>> origin/master
 = Method: get_user_meta =
 
 It needs 'user_id'. 'meta_key' var is optional.
@@ -246,8 +231,4 @@ It needs 'cookie', 'post_id', 'content', 'comment_status' vars.
 
 http://localhost/api/user/post_comment/?cookie=COOKIE-HERE&post_id=ID&content=Comment contents here&comment_status=1
 
-<<<<<<< HEAD
 For additional features, pro version plugin details check here http://www.parorrey.com/solutions/json-api-user-plus/
-=======
-For details, check here http://www.parorrey.com/solutions/json-api-user/
->>>>>>> origin/master
