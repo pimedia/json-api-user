@@ -48,7 +48,7 @@ function pim_draw_notice_json_api() {
 
     echo '<div id="message" class="error fade"><p style="line-height: 150%">';
 
-    _e('<strong>JSON API User</strong></a> requires the JSON API plugin to be activated. Please <a href="wordpress.org/plugins/json-api/‎">install / activate JSON API</a> first.', 'json-api-user');
+    _e('<strong>JSON API User</strong></a> requires the JSON API plugin to be activated. Please <a href="https://wordpress.org/plugins/json-api/‎">install / activate JSON API</a> first.', 'json-api-user');
 
     echo '</p></div>';
 
