@@ -115,7 +115,12 @@ $user_id = wp_insert_user( $user );
 /*Send e-mail to admin and new user - 
 You could create your own e-mail instead of using this function*/
 
-if($user_id) wp_new_user_notification( $user_id, $user_pass );	  
+if( isset($_REQUEST['user_pass']) && $_REQUEST['notify']=='no') {
+	$notify = false;	
+  }else $notify = true;
+
+
+if($user_id && $notify) wp_new_user_notification( $user_id, $user_pass );	  
 
 			}
 		} 
@@ -327,16 +332,16 @@ public function validate_auth_cookie() {
 	}
 
 public function generate_auth_cookie() {
-
+		
 		global $json_api;
 
-
 		$nonce_id = $json_api->get_nonce_id('user', 'generate_auth_cookie');
+
+
 
 		if (!wp_verify_nonce($json_api->query->nonce, $nonce_id)) {
 
 			$json_api->error("Your 'nonce' value was incorrect. Use the 'get_nonce' API method.");
-
 		}
 
 
@@ -350,13 +355,16 @@ public function generate_auth_cookie() {
 		if (!$json_api->query->password) {
 
 			$json_api->error("You must include a 'password' var in your request.");
-		}else $password	= 	$json_api->query->password;
-//d($password);
 
- $user = wp_authenticate($json_api->query->username, $password);
+		}	
+		
+		if ($json_api->query->seconds) 	$seconds = (int) $json_api->query->seconds;
+
+		else $seconds = 1209600;//14 days
 
 
 
+    	$user = wp_authenticate($json_api->query->username, $json_api->query->password);
 
     	if (is_wp_error($user)) {
 
@@ -367,52 +375,31 @@ public function generate_auth_cookie() {
     	}
 
 
-
-    	$expiration = time() + apply_filters('auth_cookie_expiration', 1209600, $user->ID, true);
+    	$expiration = time() + apply_filters('auth_cookie_expiration', $seconds, $user->ID, true);
 
     	$cookie = wp_generate_auth_cookie($user->ID, $expiration, 'logged_in');
 
-
-		preg_match('|src="(.+?)"|', get_avatar( $user->ID, 32 ), $avatar);		
-
-  	
+		preg_match('|src="(.+?)"|', get_avatar( $user->ID, 32 ), $avatar);	
 
 		return array(
-
 			"cookie" => $cookie,
-
 			"user" => array(
-
 				"id" => $user->ID,
-
 				"username" => $user->user_login,
-
 				"nicename" => $user->user_nicename,
-
 				"email" => $user->user_email,
-
 				"url" => $user->user_url,
-
 				"registered" => $user->user_registered,
-
 				"displayname" => $user->display_name,
-
 				"firstname" => $user->user_firstname,
-
 				"lastname" => $user->last_name,
-
 				"nickname" => $user->nickname,
-
 				"description" => $user->user_description,
-
 				"capabilities" => $user->wp_capabilities,
-
 				"avatar" => $avatar[1]
 
 			),
-
 		);
-
 	}
 
 public function get_currentuserinfo() {

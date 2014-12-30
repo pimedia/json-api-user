@@ -6,7 +6,7 @@ Tags: json api, RESTful user registration, authentication, RESTful Facebook Logi
 
 Contributors: parorrey
 
-Stable tag: 1.4
+Stable tag: 1.5
 
 Requires at least: 3.0.1
 
@@ -66,8 +66,15 @@ To install JSON API User just follow these steps:
 
 
 ==Changelog==
+= 1.5 =
+
+* Added the function to authenticate, allow the user (with edit rights) to use JSON API core controllers as well. Thanks `necro_txilok` for the suggestion.
+* Updated `generate_auth_cookie` to allow setting up auth cookie for any required duration. Just provide the `seconds` var with `nonce`, `username` and `password` to get required cookie. Default time is 14 days.
+* Updated `register` to allow disabling notification email to user after registration. Provide `notify` var with value 'no' while registering and it won't send email. You must provide `user_pass` var (which is optional otherwise) to use this because password is sent in the email. Without `user_pass` var, this won't make sense disablig notification so it won't. 
+* Fixed typos in documentation and aded new documentation. 
 
 = 1.4 =
+
 * Updated update_user_meta method to allow multiple values for any meta_key in array format as well as single value. Earlier, it allowed only single value per meta_key. 
 * Updated get_user_meta method to remove blank value fields and also removed the first index of array for each value. Earlier, it showed all fields and every returned value was at the first index of array.
 * A pro version of this plugin, JSON API User Plus, is available now here http://www.parorrey.com/solutions/json-api-user-plus/. Apart from additional features of BuddyPress Messages component, Pro version includes API key which protects and restricts the endpoint calls. This key can be updated from Settings > User Plus options page. Your app must include this key with every call to get the data from REST API.  
@@ -145,15 +152,21 @@ Optional fields: 'user_pass', 'user_nicename', 'user_url', 'nickname', 'first_na
 
 Please make sure you provide valid values that these fields expect in correct format.
 
+To disbale registration email notification to user:
+
+http://localhost/api/user/register/?username=john&email=john@domain.com&nonce=8bdfeb4e16&display_name=John&user_pass=8734tHYS&notify=no
+
+
+
 = Method: fb_connect =
 
 It needs valid 'access_token' var.
 
 http://localhost/api/user/fb_connect/?access_token=CAACEdEose0cBADLKmcHWOZCnW4RGU8emG
 
-Provide valid access_token with email extended permission. To generate test access_token, try this tool https://developers.facebook.com/tools/explorer/ and select the app from above drop down that you want to get access_token for and then select email from the fields. By default, only 'id' and 'name' are added but you need to include 'email' for user identification.
+Provide valid access_token with email extended permission. To generate test access_token, try this tool https://developers.facebook.com/tools/explorer/ and select the app from above drop down that you want to get access_token (You must have joined that app already with email permission to generate access_token) for and then select email from the fields. By default, only 'id' and 'name' are added but you need to include 'email' for user identification.
 
-You will have to first allow extended permission for email in the app joining screen. Please note that above tool is only for testing, you generate valid access_token using the Graph API in your app.
+You will have to first allow extended permission for email in the app joining screen. Please note that above tool is only for testing, you generate valid access_token using the Graph API in your app. You should know Facebook Graph API to use this endpoint.
 
 = Method: validate_auth_cookie =
 
@@ -163,11 +176,17 @@ http://localhost/api/user/validate_auth_cookie/?cookie=admin|43089754375034fjwfn
 
 = Method: generate_auth_cookie =
 
-It needs 'nonce' var.
+It needs `nonce`, `username`, `password` vars. `seconds` is optional.
 
-First get the nonce: http://localhost/api/get_nonce/?controller=user&method=generate_auth_cookie
+First get the nonce: http://localhost/api/get_nonce/?controller=auth&method=generate_auth_cookie
 
-Then generate cookie: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&user_id=john&password=PASSWORD-HERE
+Then generate cookie: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&username=john&password=PASSWORD-HERE
+
+Optional 'seconds' var. It provided, generated cookie will be valid for that many seconds, otherwise default is for 14 days.
+
+generate cookie for 1 minute: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&username=john&password=PASSWORD-HERE&seconds=60
+
+60 means 1 minute.
 
 = Method: delete_user_meta =
 
