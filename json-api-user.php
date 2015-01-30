@@ -6,9 +6,9 @@
 
   Plugin URI: http://www.parorrey.com/solutions/json-api-user/
 
-  Description: Extends the JSON API for RESTful user registration, authentication, password reset, Facebook Login, user meta and BuddyPress Profile related functions
+  Description: Extends the JSON API for RESTful user registration, authentication, password reset, Facebook Login, user meta and BuddyPress Profile related functions. A Pro version is also available.
 
-  Version: 1.5
+  Version: 1.6
 
   Author: Ali Qureshi
 

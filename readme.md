@@ -6,17 +6,17 @@ Tags: json api, RESTful user registration, authentication, RESTful Facebook Logi
 
 Contributors: parorrey
 
-Stable tag: 1.5
+Stable tag: 1.6
 
 Requires at least: 3.0.1
 
-Tested up to: 4.0
+Tested up to: 4.1
 
 License: GPLv2 or later
 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Extends the JSON API Plugin to allow RESTful user registration, authentication and many other User Meta, BuddyPress functions.
+Extends the JSON API Plugin to allow RESTful user registration, authentication and many other User Meta, BuddyPress functions. A Pro version is also available.
 
 
 ==Description==
@@ -46,11 +46,13 @@ My other JSON API Auth plugin has also been integrated with this from version 1.
 
 Hope this will help some.
 
-=Pro Version - JSON API User Plus=
+Pro Version - JSON API User Plus
 
 A pro version of this plugin, JSON API User Plus, is available here http://www.parorrey.com/solutions/json-api-user-plus/ that supports BuddyPress Messages component, BuddyPress avatar upload and other BuddyPress related functions to integrate BuddyPress features in your mobile app via REST.
 
 'JSON API User Plus' includes API key which protects and restricts the endpoint calls. This key can be updated from Settings > User Plus options page. Your app must include this key with every call to get the data from REST API. Please see documentation for calling endpoints examples for 'JSON API User Plus'.
+
+'JSON API User Plus' also enables you to `add_post`, `update_post`, `delete_post` with featured image via RESTful endpoints calls. It also enabled you to use BuddyPress Messages component endpoints via REST. Please see details http://www.parorrey.com/solutions/json-api-user-plus/ for all the available endpoints. 
 
 ==Installation==
 
@@ -66,6 +68,16 @@ To install JSON API User just follow these steps:
 
 
 ==Changelog==
+
+= 1.6 =
+
+* generate_auth_cookie does not require nonce any more to generate cookie.
+* generate_auth_cookie now also returns 'cookie_name'.
+
+= 1.5.1 =
+
+* Fixed documentation error for generate_auth_cookie.
+
 = 1.5 =
 
 * Added the function to authenticate, allow the user (with edit rights) to use JSON API core controllers as well. Thanks `necro_txilok` for the suggestion.
@@ -176,15 +188,15 @@ http://localhost/api/user/validate_auth_cookie/?cookie=admin|43089754375034fjwfn
 
 = Method: generate_auth_cookie =
 
-It needs `nonce`, `username`, `password` vars. `seconds` is optional.
+It needs `username`, `password` vars. `seconds` is optional.
 
-First get the nonce: http://localhost/api/get_nonce/?controller=auth&method=generate_auth_cookie
+First get the nonce: http://localhost/api/get_nonce/?controller=user&method=generate_auth_cookie
 
-Then generate cookie: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&username=john&password=PASSWORD-HERE
+Then generate cookie: http://localhost/api/user/generate_auth_cookie/?username=john&password=PASSWORD-HERE
 
 Optional 'seconds' var. It provided, generated cookie will be valid for that many seconds, otherwise default is for 14 days.
 
-generate cookie for 1 minute: http://localhost/api/user/generate_auth_cookie/?nonce=375034fjwfn39u8&username=john&password=PASSWORD-HERE&seconds=60
+generate cookie for 1 minute: http://localhost/api/user/generate_auth_cookie/?username=john&password=PASSWORD-HERE&seconds=60
 
 60 means 1 minute.
 

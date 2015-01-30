@@ -335,14 +335,13 @@ public function generate_auth_cookie() {
 		
 		global $json_api;
 
+		/*
 		$nonce_id = $json_api->get_nonce_id('user', 'generate_auth_cookie');
-
-
 
 		if (!wp_verify_nonce($json_api->query->nonce, $nonce_id)) {
 
 			$json_api->error("Your 'nonce' value was incorrect. Use the 'get_nonce' API method.");
-		}
+		}*/
 
 
 		if (!$json_api->query->username) {
@@ -383,6 +382,7 @@ public function generate_auth_cookie() {
 
 		return array(
 			"cookie" => $cookie,
+			"cookie_name" => LOGGED_IN_COOKIE,
 			"user" => array(
 				"id" => $user->ID,
 				"username" => $user->user_login,
