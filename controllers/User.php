@@ -18,6 +18,16 @@ class JSON_API_User_Controller {
      * @param String display_name: display_name for user
      */   
 
+public function info(){	  
+
+	  	global $json_api;
+
+   		return array(
+				"version" => JAU_VERSION				
+		   );	   
+
+	  }  
+	  
 public function register(){
 
 	global $json_api;	  
@@ -109,7 +119,7 @@ foreach($_REQUEST as $field => $value){
 	if( in_array($field, $allowed_params) ) $user[$field] = trim(sanitize_text_field($value));
 	
     }
-
+$user['role'] = get_option('default_role');
 $user_id = wp_insert_user( $user );
 
 /*Send e-mail to admin and new user - 

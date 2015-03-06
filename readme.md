@@ -6,11 +6,11 @@ Tags: json api, RESTful user registration, authentication, RESTful Facebook Logi
 
 Contributors: parorrey
 
-Stable tag: 1.6
+Stable tag: 1.7
 
 Requires at least: 3.0.1
 
-Tested up to: 4.1
+Tested up to: 4.1.1
 
 License: GPLv2 or later
 
@@ -68,6 +68,11 @@ To install JSON API User just follow these steps:
 
 
 ==Changelog==
+
+= 1.7 =
+
+* added 'info' endpoint for plugin version.
+* added default user role for user register endpoint.
 
 = 1.6 =
 
@@ -155,6 +160,12 @@ To install JSON API User just follow these steps:
 * nonce can be created by calling if you are registering user. http://localhost/api/get_nonce/?controller=user&method=register
 
 * You can then use 'nonce' value to register user.
+
+= Method: info =
+
+http://localhost/api/user/info/
+
+This returns plugin version.
 
 = Method: register =
 
