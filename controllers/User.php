@@ -167,9 +167,16 @@ $avatar	= bp_core_fetch_avatar ( array( 'item_id' => $json_api->query->user_id, 
 
         return array('avatar'=>$avatar);	
    } else {
-	  
-	  $json_api->error("You must install and activate BuddyPress plugin to use this method.");
-	  
+   		global $wp_version;
+
+   		if ($wp_version >= 4.2){
+			$size = 50;
+			if ($json_api->query->type == "full")
+				$size = 150;
+		   	$args = get_avatar_data( $json_api->query->user_id, array('size'=> $size ));
+		  	return array('avatar'=> $args['url'] );
+		}
+	  	$json_api->error("You must install and activate BuddyPress plugin to use this method or upgrade to Wordpress 4.2+");
 	  }
   
 	 } 
