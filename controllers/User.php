@@ -17,7 +17,21 @@ class JSON_API_User_Controller {
 	 * @param String user_pass: user_pass to be set (optional)
      * @param String display_name: display_name for user
      */   
-
+public function __construct() {
+		global $json_api;
+		// allow only connection over https. because, well, you care about your passwords and sniffing.
+		// turn this sanity-check off if you feel safe inside your localhost or intranet.
+		// send an extra POST parameter: insecure=cool
+		if (empty($_SERVER['HTTPS']) ||
+		    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'off')) {
+			if (empty($_REQUEST['insecure']) || $_REQUEST['insecure'] != 'cool') {
+				$json_api->error("SSL is not enabled. Either use _https_ or provide 'insecure' var as insecure=cool to confirm you want to use http protocol.");
+			}
+		}
+	
+		
+	}
+	
 public function info(){	  
 
 	  	global $json_api;
@@ -32,6 +46,11 @@ public function register(){
 
 	global $json_api;	  
 
+
+if (!get_option('users_can_register')) {
+            $json_api->error("User registration is disabled. Please enable it in Settings > Gereral.");            
+        }
+		
    if (!$json_api->query->username) {
 			$json_api->error("You must include 'username' var in your request. ");
 		}
@@ -54,6 +73,10 @@ public function register(){
 	else $display_name = sanitize_text_field( $json_api->query->display_name );
 
 $user_pass = sanitize_text_field( $_REQUEST['user_pass'] );
+
+if ($json_api->query->seconds) 	$seconds = (int) $json_api->query->seconds;
+
+		else $seconds = 1209600;//14 days
 
 //Add usernames we don't want used
 
@@ -126,18 +149,19 @@ $user_id = wp_insert_user( $user );
 You could create your own e-mail instead of using this function*/
 
 if( isset($_REQUEST['user_pass']) && $_REQUEST['notify']=='no') {
-	$notify = false;	
-  }else $notify = true;
+	$notify = '';	
+  }elseif($_REQUEST['notify']!='no') $notify = $_REQUEST['notify'];
 
 
-if($user_id && $notify) wp_new_user_notification( $user_id, $user_pass );	  
+if($user_id) wp_new_user_notification( $user_id, '',$notify );  
+
 
 			}
 		} 
    }
 
 	
-	$expiration = time() + apply_filters('auth_cookie_expiration', 1209600, $user_id, true);
+	$expiration = time() + apply_filters('auth_cookie_expiration', $seconds, $user_id, true);
 
 	$cookie = wp_generate_auth_cookie($user_id, $expiration, 'logged_in');
 
@@ -146,7 +170,7 @@ if($user_id && $notify) wp_new_user_notification( $user_id, $user_pass );
 		  "user_id" => $user_id	
 		  ); 		  
 
-  }   
+  } 
 
 public function get_avatar(){	  
 
@@ -267,11 +291,10 @@ public function retrieve_password(){
 
     }
 
-    $hashed = $wp_hasher->HashPassword( $key );
+    
+    $hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 
-    $wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) );
-
-
+    $wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user_login ) ); 
 
     $message = __('Someone requested that the password be reset for the following account:') . "\r\n\r\n";
 
@@ -344,19 +367,17 @@ public function validate_auth_cookie() {
 public function generate_auth_cookie() {
 		
 		global $json_api;
-
-		/*
-		$nonce_id = $json_api->get_nonce_id('user', 'generate_auth_cookie');
-
-		if (!wp_verify_nonce($json_api->query->nonce, $nonce_id)) {
-
-			$json_api->error("Your 'nonce' value was incorrect. Use the 'get_nonce' API method.");
-		}*/
+		
+		foreach($_POST as $k=>$val) {
+			if (isset($_POST[$k])) {
+				$json_api->query->$k = $val;
+			}
+		}
 
 
-		if (!$json_api->query->username) {
+		if (!$json_api->query->username && !$json_api->query->email) {
 
-			$json_api->error("You must include a 'username' var in your request.");
+			$json_api->error("You must include 'username' or 'email' var in your request to generate cookie.");
 
 		}
 
@@ -371,13 +392,28 @@ public function generate_auth_cookie() {
 
 		else $seconds = 1209600;//14 days
 
+       if ( $json_api->query->email ) {
+		   
+		 
+		 if ( is_email(  $json_api->query->email ) ) {
+		  if( !email_exists( $json_api->query->email))  {
+			 $json_api->error("email does not exist."); 
+			  }
+		 }else  $json_api->error("Invalid email address."); 
+		   
+        $user_obj = get_user_by( 'email', $json_api->query->email );
+		
+		
+		$user = wp_authenticate($user_obj->data->user_login, $json_api->query->password);
+    }else {
+		
+		 $user = wp_authenticate($json_api->query->username, $json_api->query->password);
+		}
 
-
-    	$user = wp_authenticate($json_api->query->username, $json_api->query->password);
 
     	if (is_wp_error($user)) {
 
-    		$json_api->error("Invalid username and/or password.", 'error', '401');
+    		$json_api->error("Invalid username/email and/or password.", 'error', '401');
 
     		remove_action('wp_login_failed', $json_api->query->username);
 
@@ -388,8 +424,8 @@ public function generate_auth_cookie() {
 
     	$cookie = wp_generate_auth_cookie($user->ID, $expiration, 'logged_in');
 
-		preg_match('|src="(.+?)"|', get_avatar( $user->ID, 32 ), $avatar);	
-
+		preg_match('|src="(.+?)"|', get_avatar( $user->ID, 512 ), $avatar);	
+		
 		return array(
 			"cookie" => $cookie,
 			"cookie_name" => LOGGED_IN_COOKIE,
@@ -565,6 +601,47 @@ public function delete_user_meta() {
 	   return $data;	    
 	  
 	  }
+	  
+public function update_user_meta_vars() {
+	 
+	  global $json_api;	
+
+	  if (!$json_api->query->cookie) {
+			$json_api->error("You must include a 'cookie' var in your request. Use the `generate_auth_cookie` method.");
+		}
+
+		$user_id = wp_validate_auth_cookie($json_api->query->cookie, 'logged_in');
+//	echo '$user_id: '.$user_id;	
+	
+		if (!$user_id) {
+			$json_api->error("Invalid cookie. Use the `generate_auth_cookie` method.");
+		}
+		
+	if( sizeof($_REQUEST) <=1) $json_api->error("You must include one or more vars in your request to add or update as user_meta. e.g. 'name', 'website', 'skills'. You must provide multiple meta_key vars in this format: &name=Ali&website=parorrey.com&skills=php,css,js,web design. If any field has the possibility to hold more than one value for any multi-select fields or check boxes, you must provide ending comma even when it has only one value so that it could be added in correct array format to distinguish it from simple string var. e.g. &skills=php,");
+
+//d($_REQUEST);
+foreach($_REQUEST as $field => $value){
+		
+	if($field=='cookie') continue;
+	
+	$field_label = str_replace('_',' ',$field);
+	
+	if( strpos($value,',') !== false ) {
+		$values = explode(",", $value);
+	   $values = array_map('trim',$values);
+	   }
+	else $values = trim($value);
+	//echo 'field-values: '.$field.'=>'.$value;
+	//d($values);
+
+   $result[$field_label]['updated'] =  update_user_meta(  $user_id, $field, $values);
+ 
+}
+
+	 return $result;
+   
+
+  }	  
 	  
 public function xprofile() {
 	 
@@ -755,7 +832,7 @@ return $response;
 	  
 	  }
  
-public function post_comment(){
+ public function post_comment(){
    global $json_api;
 
   if (!$json_api->query->cookie) {
@@ -774,9 +851,11 @@ public function post_comment(){
   $json_api->error("Please include 'content' var in your request.");
   }
   
-  if (!$json_api->query->comment_status ) {
-  $json_api->error("Please include 'comment_status' var in your request. Possible values are '1' (approved) or '0' (not-approved)");
-  }else $comment_approved = $json_api->query->comment_status;
+ if (!isset($json_api->query->comment_status) ) {
+  $json_api->error("Please include 'comment_status' var in your request. Possible values are comment_status=1 (approved) or comment_status=hold (not-approved)");
+  }else $comment_status = $json_api->query->comment_status;
+	
+	if($comment_status=='hold') $comment_status = 0;
 
 $user_info = get_userdata(  $user_id );
 
@@ -796,7 +875,7 @@ $user_info = get_userdata(  $user_id );
   'comment_author_IP' =>  $ip,
   'comment_agent' => $agent,
   'comment_date' => $time,
-  'comment_approved' => $comment_approved,
+  'comment_approved' => $comment_status,
    );
 
 //print_r($data);
@@ -809,5 +888,3 @@ $user_info = get_userdata(  $user_id );
    }
  
  }
- 
- 
