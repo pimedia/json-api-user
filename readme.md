@@ -7,6 +7,8 @@ Extends the JSON API Plugin to allow RESTful user registration, authentication a
 #### Donate link: 
 <http://www.parorrey.com/solutions/json-api-user-plus/>
 
+Label | Details
+------------ | -------------
 Contributors: | parorrey, BHRIV (docs)
 Stable tag | 3.0.0
 Requires at least | 3.0.1
