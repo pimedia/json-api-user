@@ -1,18 +1,22 @@
-=== JSON API User ===
+# JSON API User
 
-Donate link: <http://www.parorrey.com/solutions/json-api-user-plus/>
-Tags: json api, RESTful user registration, authentication, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile
-Contributors: parorrey
-Stable tag: 3.0.0
-Requires at least: 3.0.1
-Tested up to: 5.0.0
-Requires PHP: 5.3
-License: GPLv2 or later
-License URI: <http://www.gnu.org/licenses/gpl-2.0.html>
+## Overview
 
 Extends the JSON API Plugin to allow RESTful user registration, authentication and many other User Meta, BuddyPress functions. A Pro version is also available.
 
-==Description==
+#### Donate link: 
+<http://www.parorrey.com/solutions/json-api-user-plus/>
+
+Contributors: | parorrey, BHRIV (docs)
+Stable tag | 3.0.0
+Requires at least | 3.0.1
+Tested up to | 5.0.0
+Requires PHP | 5.3
+License | GPLv2 or later
+License URI | <http://www.gnu.org/licenses/gpl-2.0.html>
+
+
+## Description
 
 JSON API User extends the JSON API Plugin with a new Controller to allow RESTful user registration, authentication, password reset, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile get and update methods. This plugin is for WordPress/Mobile app developers who want to use WordPress as mobile app data backend.
 
@@ -37,13 +41,12 @@ My other JSON API Auth plugin has also been integrated with this from version 1.
 
 Hope this will help some.
 
-Pro Version - JSON API User Plus
+#### Pro Version - JSON API User Plus
 
-A pro version of this plugin, JSON API User Plus, is available here <http://www.parorrey.com/solutions/json-api-user-plus/> that supports BuddyPress Messages component, BuddyPress avatar upload and other BuddyPress related functions to integrate BuddyPress features in your mobile app via REST.
-
+A pro version of this plugin, [JSON API User Plus](http://www.parorrey.com/solutions/json-api-user-plus/) supports BuddyPress Messages component, BuddyPress avatar upload and other BuddyPress related functions to integrate BuddyPress features in your mobile app via REST.
 'JSON API User Plus' includes API key which protects and restricts the endpoint calls. This key can be updated from Settings &gt; User Plus options page. Your app must include this key with every call to get the data from REST API. Please see documentation for calling endpoints examples for 'JSON API User Plus'.
 
-JSON API User Plus features include:
+#### JSON API User Plus features include:
 
 -   Generate Auth Cookie for user authentication
 -   Validate Auth Cookie
@@ -67,7 +70,7 @@ JSON API User Plus features include:
 -   BuddyPress Settings
 -   & many more
 
-== Installation ==
+## Installation
 
 First you have to install the JSON API for WordPress Plugin (<http://wordpress.org/extend/plugins/json-api/installation/>).
 
@@ -83,7 +86,14 @@ To install JSON API User just follow these steps:
 2.  Call to get\_currentuserinfo endpoint using Postman
 3.  Call to validate\_auth\_cookie endpoint using Postman
 
-== Changelog ==
+
+
+##### Tags: 
+json api, RESTful user registration, authentication, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile
+
+
+
+### Changelog
 
 = 3.0.0 =
 
