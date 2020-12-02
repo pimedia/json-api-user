@@ -1,0 +1,143 @@
+== Changelog ==
+
+= 3.1.3 =
+* Added action links to Settings > JSON API > User controller, and User Plus Plugin
+
+= 3.1.2 =
+* Added url for JSON API User Plus Plugin 
+
+= 3.1.1 =
+* Added url for JSON API Plugin 
+
+= 3.1.0 =
+* tagging the version for latest WordPress version 5.2.2 & added <a href="https://github.com/PI-Media/json-api">JSON API Plugin</a> (https://github.com/PI-Media/json-api) url on GitHub
+
+= 3.0.0 =
+* tagging the version for latest WordPress version 5.0.0
+
+= 2.9 =
+* tagging the version for latest WordPress version 4.9.8 
+
+= 2.8 =
+* Updated post_comment endpoint. fixed bug for comment_status=hold for unpublished comments. 
+
+= 2.7 =
+* Updated post_comment endpoint. fixed bug for comment_status=0, courtesy jeromedms.
+
+= 2.6 =
+* Updated for WordPress version 4.9.
+
+= 2.5 =
+* Updated 'register' endpoint to follow WordPress Settings to enable/disable user registration.
+
+= 2.4 =
+* Changing error message for 'generate_auth_cookie' endpoint.
+
+= 2.3 =
+* Updated 'generate_auth_cookie' endpoint to make it secure for https protocol and support POST method for sending username and password, you can still bypass SSL requirement by passing insecure=cool.
+* Updated 'generate_auth_cookie' to allow cookie generation using both user_name or email account with password.
+* Added documentation 'register' endpoint for registering with user provided password.
+
+= 2.2 =
+* Updated 'retrieve_password' endpoint to fix the bug finally, no more invalid key error.
+
+= 2.1 =
+* Updated 'retrieve_password' endpoint to fix the bug. WordPress 4.3.1 made it stopped working.
+* Updated Documentation.
+
+= 2.0 =
+* Updated 'register' endpoint. WordPress 4.3.1 changed wp_new_user_notification function and it stopped email notification for new user. Custom password is not available anymore. Only system generated password is available via email.
+
+= 1.9.1 =
+* removed debugging code.
+
+= 1.9 =
+
+* Added `update_user_meta_vars` to allow updating more than 1 meta_key variable at a time to cut down on multiple http requests.
+
+= 1.8 =
+
+* Updated `register` to allow setting up cookie for any required duration. A cookie is sent in response on registration. Just provide the `seconds` var with others to get required cookie. Default time is 14 days.
+
+= 1.7 =
+
+* added 'info' endpoint for plugin version.
+* added default user role for user register endpoint.
+
+= 1.6 =
+
+* generate_auth_cookie does not require nonce any more to generate cookie.
+* generate_auth_cookie now also returns 'cookie_name'.
+
+= 1.5.1 =
+
+* Fixed documentation error for generate_auth_cookie.
+
+= 1.5 =
+
+* Added the function to authenticate, allow the user (with edit rights) to use JSON API core controllers as well. Thanks `necro_txilok` for the suggestion.
+* Updated `generate_auth_cookie` to allow setting up auth cookie for any required duration. Just provide the `seconds` var with `nonce`, `username` and `password` to get required cookie. Default time is 14 days.
+* Updated `register` to allow disabling notification email to user after registration. Provide `notify` var with value 'no' while registering and it won't send email. You must provide `user_pass` var (which is optional otherwise) to use this because password is sent in the email. Without `user_pass` var, this won't make sense disablig notification so it won't. 
+* Fixed typos in documentation and aded new documentation. 
+
+= 1.4 =
+
+* Updated update_user_meta method to allow multiple values for any meta_key in array format as well as single value. Earlier, it allowed only single value per meta_key. 
+* Updated get_user_meta method to remove blank value fields and also removed the first index of array for each value. Earlier, it showed all fields and every returned value was at the first index of array.
+* A pro version of this plugin, JSON API User Plus, is available now here http://www.parorrey.com/solutions/json-api-user-plus/. Apart from additional features of BuddyPress Messages component, Pro version includes API key which protects and restricts the endpoint calls. This key can be updated from Settings > User Plus options page. Your app must include this key with every call to get the data from REST API.  
+
+= 1.3 =
+
+* Updated get_user_meta method. It requires 'cookie' var now to protect it. 'meta_key' var is optional.
+* Updated get_userinfo method. Removed email, user_login values from response 
+* Added post_comment method. It needs 'cookie', 'post_id', 'content' and 'comment_status' vars.
+
+= 1.2.2 =
+
+* removed extra fields from xprofile end point for 'default' value
+
+= 1.2.1 =
+
+* removed debugging code from generate_auth_cookie 
+
+= 1.2 =
+
+* Updated register method to allow all available fields with user registration. These include 'user_login', 'user_email', 'user_pass', 'display_name', 'user_nicename', 'user_url', 'nickname', 'first_name', 'last_name', 'description', 'rich_editing', 'user_registered', 'role', 'jabber', 'aim', 'yim', 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front'. 
+
+* Updated xprofile_update method to correctly update multiple values for any field in array format. Earlier, it was updating all values as array. You can also update more than one field simultaneously.
+
+* Fixed some documentation typos
+
+= 1.1 =
+
+* Added fb_connect method. It needs valid 'access_token' var.
+
+* Added validate_auth_cookie method. It needs 'cookie' var.
+
+* Added generate_auth_cookie method. It needs 'nonce' var.
+
+* Added delete_user_meta method. It needs 'cookie' and 'meta_key' var and 'meta_value' to delete.
+
+* Added update_user_meta method. It needs 'cookie' and 'meta_key' var and 'meta_value' to update.
+
+* Added get_user_meta method. It needs 'cookie'. 'meta_key' var is optional.
+
+* Added xprofile method. It needs 'user_id' and any profile 'field' var.
+
+* Added xprofile_update method. It needs 'cookie' and any profile 'field' var and 'value'.
+
+
+= 1.0 =
+
+* Added retrieve_password method. It needs user_login var.
+
+* Added get_avatar method. It needs user_id var.
+
+* Added get_userinfo method. It needs user_id var.
+
+= 0.1 =
+* Initial release.
+
+==Upgrade Notice==
+= 0.1 =
+* Initial release.

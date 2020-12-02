@@ -67,10 +67,10 @@ if (!get_option('users_can_register')) {
 		}
  else $nonce =  sanitize_text_field( $json_api->query->nonce ) ;
  
- if (!$json_api->query->display_name) {
-			$json_api->error("You must include 'display_name' var in your request. ");
+ if ($json_api->query->display_name) {
+			$display_name = sanitize_text_field( $json_api->query->display_name );
 		}
-	else $display_name = sanitize_text_field( $json_api->query->display_name );
+	
 
 $user_pass = sanitize_text_field( $_REQUEST['user_pass'] );
 
@@ -160,14 +160,30 @@ if($user_id) wp_new_user_notification( $user_id, '',$notify );
 		} 
    }
 
-	
-	$expiration = time() + apply_filters('auth_cookie_expiration', $seconds, $user_id, true);
+	if($user_id){
+		
+		if(is_array($_REQUEST['custom_fields'])){
+		 
+	foreach ($_REQUEST['custom_fields'] as $field=>$val) {
+					$data[$field] = update_user_meta( $user_id, $field, $val );
+				
+				}
+			}
+		
+		$expiration = time() + apply_filters('auth_cookie_expiration', $seconds, $user_id, true);
 
 	$cookie = wp_generate_auth_cookie($user_id, $expiration, 'logged_in');
+	 $cookie_admin = wp_generate_auth_cookie($user_id, $expiration, 'secure_auth');
 
+	 $user_info = get_userdata($user_id);
+	}
+	
  return array( 
           "cookie" => $cookie,	
-		  "user_id" => $user_id	
+	      "cookie_admin" => $cookie_admin,
+		  "cookie_name" => LOGGED_IN_COOKIE,
+		  "user_id" => $user_id,
+	      "username" => $user_info->user_login
 		  ); 		  
 
   } 
@@ -413,9 +429,8 @@ public function generate_auth_cookie() {
 
     	if (is_wp_error($user)) {
 
+			remove_action('wp_login_failed', $json_api->query->username);
     		$json_api->error("Invalid username/email and/or password.", 'error', '401');
-
-    		remove_action('wp_login_failed', $json_api->query->username);
 
     	}
 
@@ -423,11 +438,13 @@ public function generate_auth_cookie() {
     	$expiration = time() + apply_filters('auth_cookie_expiration', $seconds, $user->ID, true);
 
     	$cookie = wp_generate_auth_cookie($user->ID, $expiration, 'logged_in');
+	    $cookie_admin = wp_generate_auth_cookie($user->ID, $expiration, ‘secure_auth’);
 
 		preg_match('|src="(.+?)"|', get_avatar( $user->ID, 512 ), $avatar);	
 		
 		return array(
 			"cookie" => $cookie,
+			"cookie_admin" => $cookie_admin,
 			"cookie_name" => LOGGED_IN_COOKIE,
 			"user" => array(
 				"id" => $user->ID,
@@ -557,17 +574,18 @@ public function update_user_meta() {
 		else $meta_key = $json_api->query->meta_key;	
   
    if (!$json_api->query->meta_value) {
-			$json_api->error("You must include a 'meta_value' var in your request. You may provide multiple values separated by comma for 'meta_value' var.");
+			$json_api->error("You must include a 'meta_value' var in your request. If you have multiple values for any meta_key, you must send it as an array meta_value[] in POST method.");
 		}
-		else $meta_value = sanitize_text_field($json_api->query->meta_value);
+		else $meta_value = $json_api->query->meta_value;
   
-  if( strpos($meta_value,',') !== false ) {
-		$meta_values = explode(",", $meta_value);
-	   $meta_values = array_map('trim',$meta_values);
+  if( is_array($meta_value) ) {
+		
+	   $meta_values = array_map('trim',$meta_value);
 
 	   $data['updated'] = update_user_meta(  $user_id, $meta_key, $meta_values);
 	   }
  else $data['updated'] = update_user_meta(  $user_id, $meta_key, $meta_value); 
+	   
 	   
 	   return $data;	    
 	  
@@ -617,22 +635,21 @@ public function update_user_meta_vars() {
 			$json_api->error("Invalid cookie. Use the `generate_auth_cookie` method.");
 		}
 		
-	if( sizeof($_REQUEST) <=1) $json_api->error("You must include one or more vars in your request to add or update as user_meta. e.g. 'name', 'website', 'skills'. You must provide multiple meta_key vars in this format: &name=Ali&website=parorrey.com&skills=php,css,js,web design. If any field has the possibility to hold more than one value for any multi-select fields or check boxes, you must provide ending comma even when it has only one value so that it could be added in correct array format to distinguish it from simple string var. e.g. &skills=php,");
+	if( sizeof($_REQUEST) <=1) $json_api->error("You must include one or more vars in your request to add or update as user_meta. e.g. 'name', 'website', 'skills'. You must provide multiple meta_key vars in this format: &name=Ali&website=parorrey.com&description=This is test description. If any field has the possibility to hold more than one value for any multi-select fields or check boxes, you must provide an array of values and use POST method.");
 
-//d($_REQUEST);
+
 foreach($_REQUEST as $field => $value){
 		
 	if($field=='cookie') continue;
 	
 	$field_label = str_replace('_',' ',$field);
 	
-	if( strpos($value,',') !== false ) {
-		$values = explode(",", $value);
+	if( is_array($value) ) {
+		//$values = explode(",", $value);
 	   $values = array_map('trim',$values);
 	   }
 	else $values = trim($value);
-	//echo 'field-values: '.$field.'=>'.$value;
-	//d($values);
+
 
    $result[$field_label]['updated'] =  update_user_meta(  $user_id, $field, $values);
  
