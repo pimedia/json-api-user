@@ -1,5 +1,10 @@
 <?php
 
+// Prevent direct access to this file.
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 /*
 
   Plugin Name: JSON API User
@@ -8,7 +13,13 @@
 
   Description: Extends the JSON API for RESTful user registration, authentication, password reset, Facebook Login, user meta and BuddyPress Profile related functions. A Pro version is also available.
 
-  Version: 3.6.0
+  Version: 4.1.4
+
+  Requires at least: 3.0.1
+
+  Requires PHP: 7.4
+
+  Tested up to: 7.1.5
 
   Author: Ali Qureshi
 
@@ -18,9 +29,9 @@
 
  */
 
-define('JAU_VERSION', '3.6.0');
+define('JAU_VERSION', '4.1.4');
 
-include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 define('JSON_API_USER_HOME', dirname(__FILE__));
 
@@ -28,21 +39,22 @@ define('JSON_API_USER_HOME', dirname(__FILE__));
 
 if (!(is_plugin_active('json-api/json-api.php') || is_plugin_active('json-api-master/json-api.php'))) {
 
-    add_action('admin_notices', 'pim_draw_notice_json_api');
+  add_action('admin_notices', 'pim_draw_notice_json_api');
 
-    return;
+  return;
 
 }
 
-function jaup_action_links( $links ) {
-	
-	$links[] = '<a href="'. esc_url( get_admin_url(null, '/options-general.php?page=json-api') ) .'">JSON API</a>';
-  
-  $links[] = '<a href="https://www.parorrey.com/solutions/json-api-user-plus/" target="_blank">' . __( 'Upgrade to User Plus', 'json-api-user' ) . '</a>';
+function jaup_action_links($links)
+{
 
- return $links;
+  $links[] = '<a href="' . esc_url(get_admin_url(null, '/options-general.php?page=json-api')) . '">JSON API</a>';
+
+  $links[] = '<a href="https://www.parorrey.com/solutions/json-api-user-plus/" target="_blank">' . __('Upgrade to User Plus', 'json-api-user') . '</a>';
+
+  return $links;
 }
-add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), 'jaup_action_links', 10, 1 );
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'jaup_action_links', 10, 1);
 
 
 add_filter('json_api_controllers', 'pimJsonApiController');
@@ -55,43 +67,47 @@ load_plugin_textdomain('json-api-user', false, basename(dirname(__FILE__)) . '/l
 
 
 
-function pim_draw_notice_json_api() {
+function pim_draw_notice_json_api()
+{
 
-    echo '<div id="message" class="error fade"><p style="line-height: 150%">';
+  echo '<div id="message" class="error fade"><p style="line-height: 150%">';
 
-    _e('<strong>JSON API User</strong></a> requires the JSON API plugin to be activated. Please <a href="https://github.com/PI-Media/json-api">install / activate JSON API</a> first from <a href="https://github.com/PI-Media/json-api" target="_blank">GitHub repository here</a>. <br>You can also upgrade to a pro verison <a href="http://www.parorrey.com/solutions/json-api-user-plus/" target="_blank">JSON API User Plus</a>', 'json-api-user');
+  _e('<strong>JSON API User</strong></a> requires the JSON API plugin to be activated. Please <a href="https://github.com/PI-Media/json-api">install / activate JSON API</a> first from <a href="https://github.com/PI-Media/json-api" target="_blank">GitHub repository here</a>. <br>You can also upgrade to a pro verison <a href="http://www.parorrey.com/solutions/json-api-user-plus/" target="_blank">JSON API User Plus</a>', 'json-api-user');
 
-    echo '</p></div>';
-
-}
-
-
-
-function pimJsonApiController($aControllers) {
-
-    $aControllers[] = 'User';
-
-    return $aControllers;
+  echo '</p></div>';
 
 }
 
 
 
-function setUserControllerPath($sDefaultPath) {
+function pimJsonApiController($aControllers)
+{
 
-    return dirname(__FILE__) . '/controllers/User.php';
+  $aControllers[] = 'User';
+
+  return $aControllers;
 
 }
 
-function json_api_user_checkAuthCookie($sDefaultPath) {
-    global $json_api;
 
-    if ($json_api->query->cookie) {
-      $user_id = wp_validate_auth_cookie($json_api->query->cookie, 'logged_in');
-      if ($user_id) {
-        $user = get_userdata($user_id);
 
-        wp_set_current_user($user->ID, $user->user_login);
-      }
+function setUserControllerPath($sDefaultPath)
+{
+
+  return dirname(__FILE__) . '/controllers/User.php';
+
+}
+
+function json_api_user_checkAuthCookie($sDefaultPath)
+{
+  global $json_api;
+
+  if ($json_api->query->cookie) {
+    $user_id = wp_validate_auth_cookie($json_api->query->cookie, 'logged_in');
+    if ($user_id) {
+      $user = get_userdata($user_id);
+
+      wp_set_current_user($user->ID, $user->user_login);
     }
+  }
 }

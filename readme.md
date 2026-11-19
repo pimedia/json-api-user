@@ -1,12 +1,12 @@
 === JSON API User ===
 
-Donate link: http://www.parorrey.com/solutions/json-api-user-plus/
+Donate link: https://www.parorrey.com/donate/
 Tags: json api, RESTful user registration, authentication, RESTful Facebook Login, RESTful User Meta and BuddyPress xProfile
 Contributors: parorrey
-Stable tag: 3.6.0
+Stable tag: 4.1.4
 Requires at least: 3.0.1
-Tested up to: 5.5.3
-Requires PHP: 5.3
+Tested up to: 7.1.5
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

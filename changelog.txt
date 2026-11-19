@@ -1,5 +1,13 @@
 == Changelog ==
 
+= 4.1.3 =
+* Added a migration notice recommending the newer RESTful JSON API plugin for new projects.
+* Documented its JWT bearer authentication, HTTPS-by-default protection, and broader controller-based endpoint set.
+* Added secure WordPress.org and donation links.
+
+= 4.1.1 =
+* Security fix: post_comment endpoint sanitized comment content with wp_filter_post_kses() and switched from wp_insert_comment() to wp_new_comment() to restore WordPress's standard comment filtering/moderation pipeline, fixing a stored XSS vulnerability. comment_approved (auto-approve) is now restricted to users with the moderate_comments capability instead of being settable by any authenticated user.
+
 = 3.1.3 =
 * Added action links to Settings > JSON API > User controller, and User Plus Plugin
 
